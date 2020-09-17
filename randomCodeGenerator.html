@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <title>randomCodeGenerator</title>
+    <style>
+        *{
+            font-family: 微軟正黑體;
+            /* border: solid 1px black; */
+        }
+
+        html, body{
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app{
+            position: absolute;
+            box-sizing: border-box;
+            height: 500px;
+            width: 800px;
+            border-radius: 10px;
+            background-color:#e3fdfd;
+            padding: 50px;
+            box-shadow:3px 3px 5px 6px #cccccc;
+        }
+        input.select{
+            display: none;
+        }
+        input.select+span{
+            display: inline-block;
+            background-color: #cbf1f5;
+            padding: 3px 6px;
+            color: #bbbccc;
+            user-select: none;
+            margin: 0px 50px 20px 0px;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-weight: 900;
+            font-size: 25px;
+        }
+        input.parentSelect+span{
+            margin-left: 53px;
+            /* border: solid 2px #f0a500; */
+            background-color: #f0a500;
+            color: #f4f4f4;
+        }
+        input.select:checked+span{
+            color: #71c9ce  ;
+            background-color: #f4f4f4
+        }
+        input.parentSelect:checked+span{
+            color: #f0a500;
+        }
+        label{
+            cursor: pointer;
+        }
+        .qtyminus, .qtyplus, input.num{
+            border: none;
+            background-color: transparent;
+            height: 30px;
+            font-weight: 600;
+            font-size: 30px;
+            color: #aabbbb;
+            width: 40px;
+            padding: 0px 10px;
+            text-align: center;
+        }
+        .qtyminus, .qtyplus{
+            cursor: pointer;
+        }
+        .code{
+            font-weight: 600;
+            font-size: 25px;
+            color: #aabbbb;
+            padding: 10px 0px 60px;
+        }
+        .btn-generate{
+            background-color: transparent;
+            border: groove 7px #71c9ce;
+            border-radius: 15px;
+            font-size: 45px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #71c9ce;
+            padding: 7px 15px;
+            cursor: pointer;
+            margin-bottom: 60px;
+        }
+        .generate{
+            font-family: 'Permanent Marker', cursive;
+        }
+        .result{
+            background: #a6e3e9;
+            border: transparent;
+            position: absolute;
+            height: 250px;
+            width: 260px;
+            right: 80px;
+            bottom: 80px;
+            font-size: 35px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #71c9ce;
+        }
+        .btn-copy{
+            background-color: transparent;
+            border: dashed 3px #71c9ce;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            color: #71c9ce;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <form class="options">
+            <label><input type="checkbox" name="en" class="select sonSelect" /><span>英文</span></label>
+            <label><input type="checkbox" name="num" class="select sonSelect" /><span>數字</span></label>
+            <label><input type="checkbox" name="mark" class="select sonSelect" /><span>符號</span></label>
+            <label><input type="checkbox" name="selectAll" class="select parentSelect" onclick="checkAll(this)"><span>我全～都要！！！</span></label>
+            <div class="code">密碼位數：<label><input type="button" value="-" class="qtyminus" /></label><input type="text" name="length" value="10" class="num" /><label><input type="button" value="+" class="qtyplus" /></label></div>
+        </form>
+        <div class="btn">
+            <button class="btn-generate"><span class="generate">GENERATE!!!</span></button>
+        </div>
+        <textarea class="result" readonly></textarea>
+        <div class="btn">
+            <button class="btn-copy"><span>點一下就可以複製喔 ====></span></button>
+        </div>
+    </div>
+
+    <script>
+        function checkAll(obj){
+            var son = document.getElementsByClassName("sonSelect")
+
+            for(var i=0;i<son.length;i++){
+                son[i].checked = obj.checked
+            }
+        }
+        
+        $(function(){
+            var t = $(".num")
+
+            $(".qtyplus").click(function(){
+                t.val(parseInt(t.val())+1)
+            })
+            $(".qtyminus").click(function(){
+                if(t.val()>1){
+                    t.val(parseInt(t.val())-1)
+                }else{
+                    alert("密碼至少需要一位喔！")
+                }
+            })
+        })
+
+        $('.num').attr('disabled',"true")
+
+        document.querySelector(".btn-generate").addEventListener("click", 
+            function(){
+                var availableChar = ""
+
+                if(document.querySelector("input[name=en]").checked){
+                    availableChar += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+                }
+                if(document.querySelector("input[name=num]").checked){
+                    availableChar += "0123456789"
+                }
+                if(document.querySelector("input[name=mark]").checked){
+                    availableChar += "~!@#$%^&*()_+=-`[]{}\|;:,<.>/?"
+                }
+
+                var result = ""
+                var charLength = document.querySelector("input[name=length]").value
+                
+                for(var i=0;i<charLength;i++){
+                    var number = Math.floor(Math.random() * availableChar.length)
+                    result += availableChar[number]
+                }
+
+                document.querySelector(".result").innerHTML = result
+            }
+        )
+
+        document.querySelector(".btn-copy").addEventListener("click",
+            function(){
+                var copyText = document.querySelector(".result")
+
+                copyText.focus()
+                copyText.select()
+                copyText.setSelectionRange(0, 999999)
+                document.execCommand("copy")
+                alert("已複製至剪貼簿！")
+            }
+        )
+        
+    </script>
+</body>
+</html>
